@@ -25,9 +25,9 @@ def get_requirements_list()->List[str]:
 
     with open(REQUIREMENTS_FILE_NAME) as requirement_file:
         return requirement_file.readlines().remove("-e .")  ## -e . will install all libraries wherever  __init__ is preesent other than requiremets.txt 
-                                                            ## we remove -e . because we used find_packages() funtion below which will return -
+                                                            ## we remove -e . in setup.py because we used find_packages() funtion below which will return -
                                                             #- all our packages names in list format
-
+                                                            ## both find_packages() and -e . does the same thing
 
 setup(
 

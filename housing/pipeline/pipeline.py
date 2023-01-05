@@ -32,10 +32,10 @@ Experiment = namedtuple("Experiment", ["experiment_id", "initialization_timestam
 
 
 class Pipeline(Thread):
-    experiment: Experiment = Experiment(*([None] * 11))
+    experiment: Experiment = Experiment(*([None] * 11))      ##initailizing namdedtiple with null vlaues
     experiment_file_path = None
 
-    def __init__(self, config: Configuartion ) -> None:
+    def __init__(self, config: Configuartion ) -> None: 
         try:
             os.makedirs(config.training_pipeline_config.artifact_dir, exist_ok=True)
             Pipeline.experiment_file_path=os.path.join(config.training_pipeline_config.artifact_dir,EXPERIMENT_DIR_NAME, EXPERIMENT_FILE_NAME)
@@ -180,7 +180,7 @@ class Pipeline(Thread):
         try:
             if Pipeline.experiment.experiment_id is not None:
                 experiment = Pipeline.experiment
-                experiment_dict = experiment._asdict()                                           ## conveting to dictionary
+                experiment_dict = experiment._asdict()                                           ## conveting experiments values to dictionary
                 experiment_dict: dict = {key: [value] for key, value in experiment_dict.items()}
 
                 experiment_dict.update({
@@ -200,7 +200,7 @@ class Pipeline(Thread):
             raise HousingException(e, sys) from e
 
     @classmethod
-    def get_experiments_status(cls, limit: int = 5) -> pd.DataFrame:
+    def get_experiments_status(cls, limit: int = 5) -> pd.DataFrame:       ## reading only latest 5 results
         try:
             if os.path.exists(Pipeline.experiment_file_path):
                 df = pd.read_csv(Pipeline.experiment_file_path)

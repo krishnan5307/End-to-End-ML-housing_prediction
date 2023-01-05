@@ -162,7 +162,7 @@ class DataTransformation:
             
             logging.info(f"Loading training and test data as pandas dataframe.")
 
-            train_df = load_data(file_path=train_file_path, schema_file_path=schema_file_path)    ## loading data using functions
+            train_df = load_data(file_path=train_file_path, schema_file_path=schema_file_path)    ## loading data using utility functions
             
             test_df = load_data(file_path=test_file_path, schema_file_path=schema_file_path)
 
@@ -186,9 +186,9 @@ class DataTransformation:
             input_feature_test_arr = preprocessing_obj.transform(input_feature_test_df)       ## trasfrom input test features
 
 
-            train_arr = np.c_[ input_feature_train_arr, np.array(target_feature_train_df)]    ##trasfromed train df
+            train_arr = np.c_[ input_feature_train_arr, np.array(target_feature_train_df)]    ##trasfromed train df 
 
-            test_arr = np.c_[input_feature_test_arr, np.array(target_feature_test_df)]          ##transormded test df
+            test_arr = np.c_[input_feature_test_arr, np.array(target_feature_test_df)]          ##transormded test df 
             
             transformed_train_dir = self.data_transformation_config.transformed_train_dir
             transformed_test_dir = self.data_transformation_config.transformed_test_dir

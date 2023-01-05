@@ -8,6 +8,10 @@ __pycache__/
 
 # Distribution / packaging
 .Python
+.csv
+.tgz
+.pkl
+.npz
 build/
 develop-eggs/
 dist/
@@ -127,3 +131,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+housing/artifact/data_ingestion/2023-01-05-19-55-32/ingested_data/test/housing.csv
+housing/artifact/data_ingestion/2023-01-05-19-55-32/ingested_data/train/housing.csv

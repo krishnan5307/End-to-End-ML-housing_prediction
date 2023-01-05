@@ -1,6 +1,10 @@
+setuptools
+pandas
 numpy
 Flask
 gunicorn
 sklearn
 pandas
 -e .
+ipykernel
+six

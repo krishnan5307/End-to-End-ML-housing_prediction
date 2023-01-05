@@ -26,10 +26,10 @@ class HousingException(Exception):
         return error_message
 
 
-    def __str__(self):
+    def __str__(self):          ## this str() returns the string when we give print statment for the class() 
         return self.error_message
 
-    def __repr__(self) -> str:
+    def __repr__(self) -> str:  ## this repr() will return something if obhject of calss is called
         return HousingException.__name__.__str()
 
 

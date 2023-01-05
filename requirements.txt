@@ -1,10 +1,15 @@
 setuptools
 pandas
-numpy
+numpy 
 Flask
 gunicorn
 sklearn
 pandas
 -e .
 ipykernel
+evidently
+dill
+matplotlib
+PyYAML
+urllib3
 six

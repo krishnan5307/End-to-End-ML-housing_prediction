@@ -64,37 +64,38 @@ class ModelTrainer:
             
 
             logging.info(f"Extracting model config file path") 
-            model_config_file_path = self.model_trainer_config.model_config_file_path
+            model_config_file_path = self.model_trainer_config.model_config_file_path     ## for model.yaml file
 
             logging.info(f"Initializing model factory class using above model config file: {model_config_file_path}")
-            model_factory = ModelFactory(model_config_path=model_config_file_path)
+            model_factory = ModelFactory(model_config_path=model_config_file_path)                 ## initializing construcotr of modelfactory class with grid search and model configs
             
             
             base_accuracy = self.model_trainer_config.base_accuracy
             logging.info(f"Expected accuracy: {base_accuracy}")
 
             logging.info(f"Initiating operation model selecttion")
-            best_model = model_factory.get_best_model(X=x_train,y=y_train,base_accuracy=base_accuracy)  ## will get best model based on accuracy score
+            best_model = model_factory.get_best_model(X=x_train,y=y_train,base_accuracy=base_accuracy)  ## on training data we will get best model based on accuracy score from grid_search ,etc
             
             logging.info(f"Best model found on training dataset: {best_model}")
             
             logging.info(f"Extracting trained model list.")
             grid_searched_best_model_list:List[GridSearchedBestModel]=model_factory.grid_searched_best_model_list
             
-            model_list = [model.best_model for model in grid_searched_best_model_list ]
+            model_list = [model.best_model for model in grid_searched_best_model_list ]  ## eg:  ## eg: LinearRegression(C=0.5) is one of best model in the list
             logging.info(f"Evaluation all trained model on training and testing dataset both")
             metric_info:MetricInfoArtifact = evaluate_regression_model(model_list=model_list,X_train=x_train,y_train=y_train,X_test=x_test,y_test=y_test,base_accuracy=base_accuracy)
                                                                          ## most generalised model is slected, train and test data accuracy is nearby value , etc
             logging.info(f"Best found model on both training and testing dataset.")
             
             preprocessing_obj=  load_object(file_path=self.data_transformation_artifact.preprocessed_object_file_path)
-            model_object = metric_info.model_object                                ### from metric info, model obj is loaded
+            model_object = metric_info.model_object                                ### from metric info, model obj is loaded,which is model itself: eg- LinearRegression(C=0.5)
 
 
             trained_model_file_path=self.model_trainer_config.trained_model_file_path
-            housing_model = HousingEstimatorModel(preprocessing_object=preprocessing_obj,trained_model_object=model_object) ## Housing model is final for deploying in prodution
-            logging.info(f"Saving model at path: {trained_model_file_path}")    ## saving both preprocessing obj and model obj together as final housing obj
-            save_object(file_path=trained_model_file_path,obj=housing_model)
+            housing_model = HousingEstimatorModel(preprocessing_object=preprocessing_obj,trained_model_object=model_object) ## Housing model is final for deploying in prodution and
+            ## HousingEstimator class is the final class containing both pre procesing obj and trained model for any test data to be tested in pipeline
+            logging.info(f"Saving model at path: {trained_model_file_path}")    ## it contains saving both preprocessing obj and model obj together as final housing obj
+            save_object(file_path=trained_model_file_path,obj=housing_model) 
 
 
             model_trainer_artifact=  ModelTrainerArtifact(is_trained=True,message="Model Trained successfully",

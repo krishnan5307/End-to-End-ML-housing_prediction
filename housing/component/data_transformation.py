@@ -105,7 +105,7 @@ class DataTransformation:
     
 
     def get_data_transformer_object(self)->ColumnTransformer:  ## returns tha preprocessing pickle file s
-        try:
+        try:                                                   
             schema_file_path = self.data_validation_artifact.schema_file_path
 
             dataset_schema = read_yaml_file(file_path=schema_file_path)
@@ -139,7 +139,7 @@ class DataTransformation:
                 ('num_pipeline', num_pipeline, numerical_columns),
                 ('cat_pipeline', cat_pipeline, categorical_columns),
             ])
-            return preprocessing
+            return preprocessing                    ## this column transformer onj contains inbuilt fit,fit_transfrom, transfrom functions
 
         except Exception as e:
             raise HousingException(e,sys) from e   

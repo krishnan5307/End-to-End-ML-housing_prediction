@@ -164,7 +164,7 @@ class Configuartion:                  ## The strucutre definition of entity clas
             model_trainer_config_info = self.config_info[MODEL_TRAINER_CONFIG_KEY]
         
             trained_model_file_path = os.path.join(model_trainer_artifact_dir,
-            model_trainer_config_info[MODEL_TRAINER_TRAINED_MODEL_DIR_KEY],             ## for pickle file 
+            model_trainer_config_info[MODEL_TRAINER_TRAINED_MODEL_DIR_KEY],             ## for pickle file :  /trained_model/model.pkl
             model_trainer_config_info[MODEL_TRAINER_TRAINED_MODEL_FILE_NAME_KEY]
             )
 

@@ -145,7 +145,9 @@ class Pipeline(Thread):
                                                                     data_validation_artifact=data_validation_artifact,
                                                                     model_trainer_artifact=model_trainer_artifact)
 
-            if model_evaluation_artifact.is_model_accepted:
+
+
+            if model_evaluation_artifact.is_model_accepted:   ## we start model pusher only if model_evaluation_artifact.is_model_accepted: is true
                 model_pusher_artifact = self.start_model_pusher(model_eval_artifact=model_evaluation_artifact)
                 logging.info(f'Model pusher artifact: {model_pusher_artifact}')
             else:
@@ -179,17 +181,17 @@ class Pipeline(Thread):
     def save_experiment(self):
         try:
             if Pipeline.experiment.experiment_id is not None:
-                experiment = Pipeline.experiment
-                experiment_dict = experiment._asdict()                                           ## conveting experiments values to dictionary
+                experiment = Pipeline.experiment ## named tuple
+                experiment_dict = experiment._asdict()      ## named tuple to dict     or    ## conveting experiments values to dictionary
                 experiment_dict: dict = {key: [value] for key, value in experiment_dict.items()}
 
                 experiment_dict.update({
                     "created_time_stamp": [datetime.now()],
-                    "experiment_file_path": [os.path.basename(Pipeline.experiment.experiment_file_path)]})
+                    "experiment_file_path": [os.path.basename(Pipeline.experiment.experiment_file_path)]})   ## line 41
 
                 experiment_report = pd.DataFrame(experiment_dict)
 
-                os.makedirs(os.path.dirname(Pipeline.experiment_file_path), exist_ok=True)
+                os.makedirs(os.path.dirname(Pipeline.experiment_file_path), exist_ok=True)  ## mode the dir removing filename which is experment.csv
                 if os.path.exists(Pipeline.experiment_file_path):
                     experiment_report.to_csv(Pipeline.experiment_file_path, index=False, header=False, mode="a")
                 else:

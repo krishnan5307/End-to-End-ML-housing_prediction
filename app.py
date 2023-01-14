@@ -14,7 +14,6 @@ from housing.pipeline.pipeline import Pipeline
 from housing.entity.housing_predictor import HousingPredictor, HousingData
 from flask import send_file, abort, render_template
 
-
 ROOT_DIR = os.getcwd()
 LOG_FOLDER_NAME = "logs"
 PIPELINE_FOLDER_NAME = "housing"

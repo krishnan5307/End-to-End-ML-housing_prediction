@@ -7,7 +7,7 @@ from housing.util.util import load_object
 import pandas as pd
 
 
-class HousingData:
+class HousingData:         ### only for prediction while user inputs data in HTML/Ui page
 
     def __init__(self,
                  longitude: float,
@@ -60,19 +60,19 @@ class HousingData:
             raise HousingException(e, sys)
 
 
-class HousingPredictor:
+class HousingPredictor:                              ### only for prediction while user inputs data in HTML/Ui page
 
     def __init__(self, model_dir: str):
         try:
-            self.model_dir = model_dir
+            self.model_dir = model_dir          ## /ROOT_DIR/SAVED_MODELS
         except Exception as e:
             raise HousingException(e, sys) from e
-
+ 
     def get_latest_model_path(self):
         try:
-            folder_name = list(map(int, os.listdir(self.model_dir)))
+            folder_name = list(map(int, os.listdir(self.model_dir)))              ## fetching latest model which is pushed to in saved models folder
             latest_model_dir = os.path.join(self.model_dir, f"{max(folder_name)}")
-            file_name = os.listdir(latest_model_dir)[0]
+            file_name = os.listdir(latest_model_dir)[0]                               ## getting model from the latest time stamp in saved models folder
             latest_model_path = os.path.join(latest_model_dir, file_name)
             return latest_model_path
         except Exception as e:

@@ -14,7 +14,7 @@ from housing.entity.model_factory import evaluate_regression_model
 
 
 
-class ModelEvaluation:
+class ModelEvaluation:                   ## model evaluation is nothing but we are comparing new trained model with already existing best model in prodcution
 
     def __init__(self, model_evaluation_config: ModelEvaluationConfig,
                  data_ingestion_artifact: DataIngestionArtifact,
@@ -33,18 +33,26 @@ class ModelEvaluation:
         try:
             model = None
             model_evaluation_file_path = self.model_evaluation_config.model_evaluation_file_path
+            
 
+            ## if first tym evaluation happens, then yaml file wont be there
             if not os.path.exists(model_evaluation_file_path):                ## if file is none
-                write_yaml_file(file_path=model_evaluation_file_path,
+                write_yaml_file(file_path=model_evaluation_file_path,  ## wont write any yaml file as dict:data is not passed
                                 )
-                return model                ## none                                    ## line34-40 : only for first tym if file doesnt exists
+                return model                ## returns none                                  ## line34-40 : only for first tym if file doesnt exists
+            
+            ## if path model_evaluation_file_path exisits , reading for yaml file in it
             model_eval_file_content = read_yaml_file(file_path=model_evaluation_file_path)
 
             model_eval_file_content = dict() if model_eval_file_content is None else model_eval_file_content  
 
-            if BEST_MODEL_KEY not in model_eval_file_content:      ## if file is there but base model is none
-                return model                              ## none
+            ## now checking for best model: key in that file
 
+            if BEST_MODEL_KEY not in model_eval_file_content:      ## if file is there but base model is none
+                return model                              ## still returns none model as there is no best model key in that yaml file in model_evaluation_file_path
+            
+
+            ## now if best model key is also available, then we load model and returns model
             model = load_object(file_path=model_eval_file_content[BEST_MODEL_KEY][MODEL_PATH_KEY])      ## if model is available
             return model
         except Exception as e:
@@ -53,22 +61,23 @@ class ModelEvaluation:
     def update_evaluation_report(self, model_evaluation_artifact: ModelEvaluationArtifact):  ## will be called only if trained model is better than base model
         try:
             eval_file_path = self.model_evaluation_config.model_evaluation_file_path      ## base model path in prdction
-            model_eval_content = read_yaml_file(file_path=eval_file_path)
-            model_eval_content = dict() if model_eval_content is None else model_eval_content
+            model_eval_content = read_yaml_file(file_path=eval_file_path)        ## reading the entire yaml file in model_evaluation_file_path
+            model_eval_content = dict() if model_eval_content is None else model_eval_content 
             
             
             previous_best_model = None                           
-            if BEST_MODEL_KEY in model_eval_content:
-                previous_best_model = model_eval_content[BEST_MODEL_KEY]              ## if old model exists in prdction
+            if BEST_MODEL_KEY in model_eval_content:               ## if old model exists in prdction
+                previous_best_model = model_eval_content[BEST_MODEL_KEY]             
 
             logging.info(f"Previous eval result: {model_eval_content}")          ## preparing trained new model from artifact
+
             eval_result = {
                 BEST_MODEL_KEY: {                                                     
                     MODEL_PATH_KEY: model_evaluation_artifact.evaluated_model_path,
                 }
             }
 
-            if previous_best_model is not None:
+            if previous_best_model is not None: ## writing history for previous best model 
                 model_history = {self.model_evaluation_config.time_stamp: previous_best_model} ## trying to prepare history if previous model exists
                 if HISTORY_KEY not in model_eval_content:        ## creating new dictionary key in base model path for history using timestamps
                     history = {HISTORY_KEY: model_history}
@@ -120,10 +129,12 @@ class ModelEvaluation:
                 logging.info("Not found any existing model. Hence accepting trained model")
                 model_evaluation_artifact = ModelEvaluationArtifact(evaluated_model_path=trained_model_file_path,
                                                                     is_model_accepted=True)
-                self.update_evaluation_report(model_evaluation_artifact)
+                ##next we passing with evaluated_model_path as trained_model_file_path through artifact
+                self.update_evaluation_report(model_evaluation_artifact) 
                 logging.info(f"Model accepted. Model eval artifact {model_evaluation_artifact} created")
                 return model_evaluation_artifact
-
+            
+            ## if model is avaialable, we compare trained model and  best model in evaluated_model_path(or production)
             model_list = [model, trained_model_object]
 
             metric_info_artifact = evaluate_regression_model(model_list=model_list,      ## gives best model of 2 in model_list
@@ -135,7 +146,7 @@ class ModelEvaluation:
                                                                )
             logging.info(f"Model evaluation completed. model metric artifact: {metric_info_artifact}")
 
-            if metric_info_artifact is None:
+            if metric_info_artifact is None: ## niether trained model and  best model in evaluated_model_path(or production) is accepted
                 response = ModelEvaluationArtifact(is_model_accepted=False,
                                                    evaluated_model_path=trained_model_file_path
                                                    )
@@ -148,7 +159,7 @@ class ModelEvaluation:
                 self.update_evaluation_report(model_evaluation_artifact)
                 logging.info(f"Model accepted. Model eval artifact {model_evaluation_artifact} created")
 
-            else:
+            else: ## ie:-  metric_info_artifact.index = 0
                 logging.info("Trained model is no better than existing model hence not accepting trained model")
                 model_evaluation_artifact = ModelEvaluationArtifact(evaluated_model_path=trained_model_file_path,
                                                                     is_model_accepted=False)

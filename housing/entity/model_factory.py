@@ -102,6 +102,7 @@ def evaluate_regression_model(model_list: list, X_train:np.ndarray, y_train:np.n
 
             #if model accuracy is greater than base accuracy and train and test score is within certain thershold
             #we will accept that model as accepted model
+
             if model_accuracy >= base_accuracy and diff_test_train_acc < 0.05:
                 base_accuracy = model_accuracy
                 metric_info_artifact = MetricInfoArtifact(model_name=model_name,
@@ -115,7 +116,7 @@ def evaluate_regression_model(model_list: list, X_train:np.ndarray, y_train:np.n
 
                 logging.info(f"Acceptable model found {metric_info_artifact}. ")
             index_number += 1
-        if metric_info_artifact is None:
+        if metric_info_artifact is None:      ## both models are not passed 
             logging.info(f"No model found with higher accuracy than base accuracy")
         return metric_info_artifact
     except Exception as e:
@@ -159,15 +160,15 @@ def get_sample_model_config_yaml_file(export_dir: str):
 
 
 class ModelFactory:
-    def __init__(self, model_config_path: str = None,):
+    def __init__(self, model_config_path: str = None,):          ## for model.yaml file
         try:
             self.config: dict = ModelFactory.read_params(model_config_path)
 
-            self.grid_search_cv_module: str = self.config[GRID_SEARCH_KEY][MODULE_KEY]
+            self.grid_search_cv_module: str = self.config[GRID_SEARCH_KEY][MODULE_KEY]                 ## config of grid search
             self.grid_search_class_name: str = self.config[GRID_SEARCH_KEY][CLASS_KEY]
             self.grid_search_property_data: dict = dict(self.config[GRID_SEARCH_KEY][PARAM_KEY])
 
-            self.models_initialization_config: dict = dict(self.config[MODEL_SELECTION_KEY])
+            self.models_initialization_config: dict = dict(self.config[MODEL_SELECTION_KEY])         ## config of models in dictiornary
 
             self.initialized_model_list = None
             self.grid_searched_best_model_list = None
@@ -241,9 +242,9 @@ class ModelFactory:
             message = f'{">>"* 30} f"Training {type(initialized_model.model).__name__}" completed {"<<"*30}'
             grid_searched_best_model = GridSearchedBestModel(model_serial_number=initialized_model.model_serial_number,
                                                              model=initialized_model.model,
-                                                             best_model=grid_search_cv.best_estimator_,
-                                                             best_parameters=grid_search_cv.best_params_,
-                                                             best_score=grid_search_cv.best_score_
+                                                             best_model=grid_search_cv.best_estimator_,  ## eg: LinearRegression(C=0.5)
+                                                             best_parameters=grid_search_cv.best_params_,  ## eg: {'C': 0.5, 'penalty': 'l2'}
+                                                             best_score=grid_search_cv.best_score_        ## scoring accuracy
                                                              )
             
             return grid_searched_best_model
@@ -271,7 +272,7 @@ class ModelFactory:
                     model = ModelFactory.update_property_of_class(instance_ref=model,  ## now model is updated with gicen params: fit_interpct =True
                                                                   property_data=model_obj_property_data)
 
-                param_grid_search = model_initialization_config[SEARCH_PARAM_GRID_KEY]
+                param_grid_search = model_initialization_config[SEARCH_PARAM_GRID_KEY]  ## model_initialization_config is already initiazled as dict
                 model_name = f"{model_initialization_config[MODULE_KEY]}.{model_initialization_config[CLASS_KEY]}" ## to string
 
                 model_initialization_config = InitializedModelDetail(model_serial_number=model_serial_number,
